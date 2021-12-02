@@ -88,7 +88,12 @@ class Sequence implements Combinator
 
 		$first = reset($res);
 		$last = end($res);
-		return [new Token($this, Utils::filterCapture($res), $first->start, $last->end), []];
+		$res = Utils::filterCapture($res);
+		$res = Utils::flatting($res);
+		if (empty($this->getName()) && count($res) == 1) {
+			return [reset($res), []];
+		}
+		return [new Token($this, $res, $first->start, $last->end), []];
 	}
 
 

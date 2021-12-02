@@ -86,6 +86,7 @@ class Utils
 					$item->end = $x->end;
 					$ret[] = $item;
 					break;
+				/* To zdrcávání není úplně domyšlené...
 				case $x->type instanceof Sequence && count($x->content) === 1:
 					$item = reset($x->content);
 					if (empty($item->getName())) {
@@ -94,7 +95,7 @@ class Utils
 						$item->end = $x->end;
 					}
 					$ret[] = $item;
-					break;
+					break;//*/
 				default:
 					$ret[] = $x;
 			}
