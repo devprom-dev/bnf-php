@@ -13,10 +13,10 @@ use LogicException;
 class Utils
 {
 
-	static function scanPattern(Combinator $type, array $patterns, $src, $offset)
+	static function scanPattern(Combinator $type, array $patterns, $src, $offset, $checkStart = True)
 	{
 		foreach ($patterns as $pattern) {
-			if (preg_match($pattern, $src, $out, PREG_OFFSET_CAPTURE, $offset) && $out[0][1] === $offset) {
+			if (preg_match($pattern, $src, $out, PREG_OFFSET_CAPTURE, $offset) && self::checkStartOffset($out[0][1], $offset, $checkStart)) {
 				if (count($out) == 1) {
 					if (strlen($out[0][0]) == 0) {
 						throw new LogicException("The pattern '$pattern' corresponds to an empty string.");
@@ -133,6 +133,16 @@ class Utils
 			return $endIndex;
 		}
 		return $endIndex;
+	}
+
+
+
+	private static function checkStartOffset($val, $expected, $checkStart)
+	{
+		if ( ! $checkStart) {
+			return True;
+		}
+		return $val === $expected;
 	}
 
 }
