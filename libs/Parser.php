@@ -6,16 +6,22 @@
 
 namespace Taco\BNF;
 
+use Taco\BNF\Combinator;
 use Taco\BNF\Combinators\Variants;
 
 
 class Parser
 {
 
+	/**
+	 * @var Combinator
+	 */
 	private $schema;
 
 
-
+	/**
+	 * @param Combinator|array<Combinator> $schema
+	 */
 	function __construct($schema)
 	{
 		if (is_array($schema)) {
@@ -27,8 +33,8 @@ class Parser
 
 
 	/**
-	 * @param string
-	 * @return array of {name: string, content: string|array, start: int, end: int}
+	 * @param string $src
+	 * @return Token Like array of {name: string, content: string|array, start: int, end: int}
 	 */
 	function parse($src)
 	{
@@ -38,15 +44,21 @@ class Parser
 		list($node, $expected) = $this->schema->scan($src, 0, []);
 		if ($node) {
 			if ($node->end < strlen($src)) {
-				throw self::fail($src, $node->end, $expected);
+				throw self::fail($src, $node->end, array_keys($expected));
 			}
 			return $node;
 		}
-		throw self::fail($src, 0, $expected);
+		throw self::fail($src, 0, array_keys($expected));
 	}
 
 
 
+	/**
+	 * @param string $src
+	 * @param int $offset
+	 * @param array<string> $expectedTokens
+	 * @return ParseException
+	 */
 	private static function fail($src, $offset, array $expectedTokens)
 	{
 		list($line, $col) = self::calculateCoordinates($src, $offset);
@@ -66,7 +78,9 @@ class Parser
 
 	/**
 	 * Returns position of token in input string.
-	 * @return array of [line, column]
+	 * @param string $src
+	 * @param int $offset
+	 * @return array<int> of [line, column]
 	 */
 	private static function calculateCoordinates($src, $offset)
 	{
@@ -79,13 +93,20 @@ class Parser
 
 
 
+	/**
+	 * @param string $src
+	 * @param int $first
+	 * @param int $line
+	 * @param int $col
+	 * @return string
+	 */
 	private static function formatContext($src, $first, $line, $col)
 	{
 		$xs = [];
 		foreach (explode("\n", $src) as $i => $x) {
-			$xs[] = sprintf('%' . (strlen($first) + 1) . 'd > %s', $first + $i, $x);
+			$xs[] = sprintf('%' . ($first + 1) . 'd > %s', $first + $i, $x);
 			if ($first + $i == $line) {
-				$xs[] = sprintf('%' . ((strlen($first) + 1) + $col + 3) . 's', '---^'); // ———
+				$xs[] = sprintf('%' . (($first + 1) + $col + 3) . 's', '---^'); // ——— @TODO
 			}
 		}
 		if (count($xs) > 20) {

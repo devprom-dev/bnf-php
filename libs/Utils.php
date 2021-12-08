@@ -13,6 +13,13 @@ use LogicException;
 class Utils
 {
 
+	/**
+	 * @param array<string> $patterns
+	 * @param string $src
+	 * @param int $offset
+	 * @param bool $checkStart
+	 * @return Token|False
+	 */
 	static function scanPattern(Combinator $type, array $patterns, $src, $offset, $checkStart = True)
 	{
 		foreach ($patterns as $pattern) {
@@ -39,6 +46,10 @@ class Utils
 
 
 
+	/**
+	 * @param array<string, Combinator> $bank
+	 * @return array<string, Combinator>
+	 */
 	static function addToBank(array $bank, Combinator $node)
 	{
 		if ($node->getName()) {
@@ -49,6 +60,11 @@ class Utils
 
 
 
+	/**
+	 * @param array<Combinator> $xs
+	 * @param int $offset
+	 * @return array<string, int>
+	 */
 	static function buildExpected(array $xs, $offset)
 	{
 		$ret = [];
@@ -62,11 +78,15 @@ class Utils
 
 
 
+	/**
+	 * @param array<Token> $res
+	 * @return array<Token>
+	 */
 	static function filterCapture(array $res)
 	{
 		$ret = [];
 		foreach ($res as $x) {
-			if ($x->type->isCapture()) {
+			if ($x->isCapture()) {
 				$ret[] = $x;
 			}
 		}
@@ -75,12 +95,16 @@ class Utils
 
 
 
+	/**
+	 * @param array<Token> $src
+	 * @return array<Token>
+	 */
 	static function flatting(array $src)
 	{
 		$ret = [];
 		foreach ($src as $x) {
 			switch (True) {
-				case $x->type instanceof Sequence && count($x->content) === 1 && empty($x->getName()):
+				case $x->type instanceof Sequence && is_array($x->content) && count($x->content) === 1 && empty($x->getName()) && reset($x->content) instanceof Token:
 					$item = reset($x->content);
 					$item->start = $x->start;
 					$item->end = $x->end;
@@ -105,6 +129,13 @@ class Utils
 
 
 
+	/**
+	 * @param int $start
+	 * @param int $end
+	 * @param string $src
+	 * @param int $offset
+	 * @return array<int|false>
+	 */
 	static function lookupBlock($start, $end, $src, $offset)
 	{
 		if ($offset >= strlen($src)) {
@@ -122,6 +153,13 @@ class Utils
 
 
 
+	/**
+	 * @param int $start
+	 * @param int $end
+	 * @param string $src
+	 * @param int $offset
+	 * @return int<0, max>|false
+	 */
 	private static function lookupEndIndex($start, $end, $src, $offset)
 	{
 		$startIndex = strpos($src, $start, $offset);
@@ -137,6 +175,12 @@ class Utils
 
 
 
+	/**
+	 * @param mixed $val
+	 * @param mixed $expected
+	 * @param bool $checkStart
+	 * @return bool
+	 */
 	private static function checkStartOffset($val, $expected, $checkStart)
 	{
 		if ( ! $checkStart) {

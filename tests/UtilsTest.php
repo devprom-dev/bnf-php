@@ -11,6 +11,7 @@ use LogicException;
 use Taco\BNF\Combinators\Sequence;
 use Taco\BNF\Combinators\Pattern;
 use Taco\BNF\Combinators\Variants;
+use Taco\BNF\Combinators\Match;
 
 
 class UtilsTest extends TestCase
@@ -96,4 +97,34 @@ class UtilsTest extends TestCase
 		];
 	}
 
+
+
+	function testFlatting_1()
+	{
+		$src = [];
+		$this->assertSame([], Utils::flatting($src));
+	}
+
+
+
+	function testFlatting_2()
+	{
+		$src = [new Token(new Match(Null, ['A']), 'A', 0, 1)];
+		$this->assertSame($src, Utils::flatting($src));
+	}
+
+
+
+	function testFlatting()
+	{
+		$src = [new Token(new Sequence(Null, [
+			new Match(Null, ['<'], False),
+			new Match(Null, ['A']),
+			new Match(Null, ['>'], False),
+			]), [new Token(new Match(Null, ['A']), 'A', 1, 2)], 1, 3)];
+		$this->assertEquals([
+			new Token(new Match(Null, ['A']), 'A', 1, 3)
+			]
+			, Utils::flatting($src));
+	}
 }
