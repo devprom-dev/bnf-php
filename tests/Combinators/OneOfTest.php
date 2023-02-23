@@ -148,9 +148,9 @@ class OneOfTest extends TestCase
 
 	function testRef()
 	{
-		$expr1 = new Match('anna', ['anna', 'Anna']);
-		$expr2 = new Match('dana', ['dana']);
-		$key = new Match('ident', ['X']);
+		$expr1 = new Matching('anna', ['anna', 'Anna']);
+		$expr2 = new Matching('dana', ['dana']);
+		$key = new Matching('ident', ['X']);
 		$number = new Pattern('num', ['~[0-9]+~']);
 
 		$parser = new Sequence('seq', [

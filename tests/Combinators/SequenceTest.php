@@ -177,12 +177,12 @@ class SequenceTest extends TestCase
 			(new Sequence(Null, [$sep, new Text('Name')]))->setOptional(),
 		]);
 		$parser = new Sequence('Collection', [
-			new Match('CollectionStart', ['['], False),
+			new Matching('CollectionStart', ['['], False),
 			new Variants(Null, [
 				$element,
 				$sep
 			]),
-			new Match('CollectionEnd', [']'], False),
+			new Matching('CollectionEnd', [']'], False),
 		]);
 
 		$src = '[Token "ahoj"]';
@@ -230,7 +230,7 @@ class SequenceTest extends TestCase
 			$sep,
 			new Text('Name'),
 			$sep,
-			new Match(Null, ['x']),
+			new Matching(Null, ['x']),
 		]));
 
 		$src = ' "Token ahoj"' . "\n\n\nx";
@@ -304,10 +304,10 @@ class SequenceTest extends TestCase
 			new Pattern('col', ['~[a-z]+~']),
 			$sep,
 			new OneOf(Null, [
-				new Match('op !=', ['!=']),
-				new Match('symbol-like', ['LIKE']),
-				new Match('symbol-ilike', ['ILIKE']),
-				new Match('symbol-match', ['MATCH']),
+				new Matching('op !=', ['!=']),
+				new Matching('symbol-like', ['LIKE']),
+				new Matching('symbol-ilike', ['ILIKE']),
+				new Matching('symbol-match', ['MATCH']),
 			]),
 			$sep,
 			new Pattern('param', ['~\:[a-z]+~']),
@@ -339,19 +339,19 @@ class SequenceTest extends TestCase
 			new Pattern('col', ['~[a-z]+~']),
 			$sep,
 			new OneOf(Null, [
-				new Match('op =', ['=']),
-				new Match('op !=', ['!=']),
-				new Match('symbol-like', ['LIKE']),
-				new Match('symbol-ilike', ['ILIKE']),
-				new Match('symbol-match', ['MATCH']),
+				new Matching('op =', ['=']),
+				new Matching('op !=', ['!=']),
+				new Matching('symbol-like', ['LIKE']),
+				new Matching('symbol-ilike', ['ILIKE']),
+				new Matching('symbol-match', ['MATCH']),
 			]),
 			$sep,
-			new Match('start-bracket', ['[']),
+			new Matching('start-bracket', ['[']),
 			new Variants(Null, [
 				new Numeric('vals'),
 				new Pattern(Null, ['~\s*,\s*~']),
 			]),
-			new Match('end-bracket', [']']),
+			new Matching('end-bracket', [']']),
 		]);
 		list($token, $expec) = $parser->scan($src, 0, []);
 		$this->assertFalse($token);
@@ -376,7 +376,7 @@ class SequenceTest extends TestCase
 	{
 		$this->expectException(LogicException::class);
 		$this->expectExceptionMessage("Sequence combinator must containt minimal two items.");
-		new Sequence(Null, [new Match(Null, [])]);
+		new Sequence(Null, [new Matching(Null, [])]);
 	}
 
 

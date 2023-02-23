@@ -21,8 +21,8 @@ class MatchTest extends TestCase
 			'a',
 			'b',
 		];
-		$this->assertSame('num', (new Match('num', $patterns))->getName());
-		$this->assertSame('xum', (new Match('xum', $patterns))->getName());
+		$this->assertSame('num', (new Matching('num', $patterns))->getName());
+		$this->assertSame('xum', (new Matching('xum', $patterns))->getName());
 	}
 
 
@@ -33,8 +33,8 @@ class MatchTest extends TestCase
 			'a',
 			'b',
 		];
-		$this->assertTrue((new Match('num', $patterns))->isCapture());
-		$this->assertFalse((new Match('num', $patterns, False))->isCapture());
+		$this->assertTrue((new Matching('num', $patterns))->isCapture());
+		$this->assertFalse((new Matching('num', $patterns, False))->isCapture());
 	}
 
 
@@ -44,7 +44,7 @@ class MatchTest extends TestCase
 	 */
 	function testCorrect($def, $src, $offset, $content)
 	{
-		$parser = new Match(null, $def);
+		$parser = new Matching(null, $def);
 		list($token,) = $parser->scan($src, $offset, []);
 		$this->assertToken($content, $token);
 	}
@@ -77,7 +77,7 @@ class MatchTest extends TestCase
 	 */
 	function testFalse($src, $offset)
 	{
-		$parser = new Match('num', [
+		$parser = new Matching('num', [
 			'a',
 			'b',
 		]);
